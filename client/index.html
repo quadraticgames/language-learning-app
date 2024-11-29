@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/ico" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Language Learning Assistant</title>
+    <script>
+      console.log('Inline script executed');
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #1a1a1a;
+        color: white;
+      }
+      #root {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="debug-loading">
+        <h1 style="color: white;">Loading Application...</h1>
+        <p style="color: white;">If this persists, check console for errors.</p>
+      </div>
+    </div>
+    <script>
+      console.log('Body script executed');
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.log('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+        return false;
+      };
+    </script>
+    <script type="module" src="/src/test.js"></script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
