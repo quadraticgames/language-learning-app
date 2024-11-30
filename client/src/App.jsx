@@ -184,6 +184,9 @@ function App() {
           });
           setShowTips(true);
         }
+        
+        // Automatically generate audio after translation
+        handleTextToSpeech();
       } else {
         console.error('Invalid translation response:', response.data);
         throw new Error('Invalid translation response format');
@@ -316,17 +319,6 @@ function App() {
 
                 {translation && (
                   <Box mb="lg">
-                    <Button
-                      variant="light"
-                      color="teal"
-                      onClick={handleTextToSpeech}
-                      disabled={audioLoading}
-                      leftSection={audioLoading ? <Loader size="sm" /> : <Text size="1.1rem">🔊</Text>}
-                      mb="md"
-                    >
-                      {audioLoading ? 'Generating audio...' : 'Listen'}
-                    </Button>
-                    
                     {audioUrl && (
                       <Box mt="md">
                         <audio controls src={audioUrl} style={{ width: '100%' }} />
