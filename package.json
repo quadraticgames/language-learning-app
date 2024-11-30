@@ -1,0 +1,8 @@
+{
+  "name": "language-learning-react",
+  "version": "1.0.0",
+  "description": "Language Learning Application",
+  "dependencies": {
+    "@google-cloud/translate": "^7.2.2"
+  }
+}
