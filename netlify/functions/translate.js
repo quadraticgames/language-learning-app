@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { Translate } from '@google-cloud/translate/build/src/v2';
 
 // Utility function to safely parse JSON
 const safeParseJSON = (body) => {
@@ -71,33 +72,14 @@ export const handler = async (event, context) => {
       };
     }
 
-    // Construct translation API URL
-    const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLanguage}`;
-    console.log('Translation API URL:', apiUrl);
+    // Initialize Google Translate with API key
+    const translate = new Translate({
+      key: process.env.GOOGLE_TRANSLATE_API_KEY
+    });
 
-    // Perform translation API request
-    const apiResponse = await fetch(apiUrl);
-    console.log('Translation API response status:', apiResponse.status);
-
-    // Parse API response
-    const apiData = await apiResponse.json();
-    console.log('Translation API response data:', JSON.stringify(apiData, null, 2));
-
-    // Validate API response
-    if (apiData.responseStatus !== 200 || !apiData.responseData) {
-      console.error('Translation API error:', apiData);
-      return {
-        statusCode: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          error: 'Translation failed', 
-          details: apiData 
-        })
-      };
-    }
+    console.log('Translating text...');
+    const [translation] = await translate.translate(text, targetLanguage);
+    console.log('Translation successful:', translation);
 
     // Return successful translation
     return {
@@ -109,7 +91,7 @@ export const handler = async (event, context) => {
         'Access-Control-Allow-Headers': 'Content-Type'
       },
       body: JSON.stringify({
-        translation: apiData.responseData.translatedText
+        translation: translation
       })
     };
 
