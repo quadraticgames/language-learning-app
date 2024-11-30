@@ -168,22 +168,36 @@ function App() {
         targetLanguage: targetLang
       });
       
+      console.log('Translation response:', response.data);
+      
       if (response.data && response.data.translation) {
         setTranslation(response.data.translation);
         
         // Get random tips for the selected language
-        const tips = LANGUAGE_TIPS[targetLang];
-        setCurrentTips({
-          key_sounds: getRandomItems(tips.key_sounds, 3),
-          common_mistakes: getRandomItems(tips.common_mistakes, 3)
-        });
-        setShowTips(true);
+        if (LANGUAGE_TIPS && LANGUAGE_TIPS[targetLang]) {
+          const tips = LANGUAGE_TIPS[targetLang];
+          setCurrentTips({
+            key_sounds: getRandomItems(tips.key_sounds || [], 3),
+            common_mistakes: getRandomItems(tips.common_mistakes || [], 3)
+          });
+          setShowTips(true);
+        }
       } else {
-        throw new Error('Invalid response format');
+        console.error('Invalid translation response:', response.data);
+        throw new Error('Invalid translation response format');
       }
     } catch (err) {
       console.error('Translation error:', err);
-      setError(err.response?.data?.error || 'Translation failed. Please try again.');
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      setError(
+        err.response?.data?.error || 
+        err.response?.data?.details || 
+        'Translation failed. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
