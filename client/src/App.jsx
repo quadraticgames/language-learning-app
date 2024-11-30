@@ -167,18 +167,21 @@ function App() {
     setShowTips(false);
     setCurrentTips({ key_sounds: [], common_mistakes: [] }); // Clear tips
     setAudioUrl(null); // Clear audio
+    
     try {
       console.log('Sending translation request:', { text, targetLang });
       
-      const response = await axios.post('/.netlify/functions/translate', {
+      // First get the translation
+      const translationResponse = await axios.post('/.netlify/functions/translate', {
         text,
         targetLanguage: targetLang
       });
       
-      console.log('Translation response:', response.data);
+      console.log('Translation response:', translationResponse.data);
       
-      if (response.data && response.data.translation) {
-        setTranslation(response.data.translation);
+      if (translationResponse.data && translationResponse.data.translation) {
+        const translatedText = translationResponse.data.translation;
+        setTranslation(translatedText);
         
         // Get random tips for the selected language
         if (LANGUAGE_TIPS && LANGUAGE_TIPS[targetLang]) {
@@ -190,10 +193,30 @@ function App() {
           setShowTips(true);
         }
         
-        // Automatically generate audio after translation
-        handleTextToSpeech();
+        // Immediately request audio for the translation
+        setAudioLoading(true);
+        try {
+          const audioResponse = await axios.post('/.netlify/functions/text-to-speech', {
+            text: translatedText,
+            languageCode: targetLang
+          });
+          
+          if (audioResponse.data && audioResponse.data.audioContent) {
+            const blob = new Blob(
+              [Uint8Array.from(atob(audioResponse.data.audioContent), c => c.charCodeAt(0))],
+              { type: 'audio/mp3' }
+            );
+            const url = URL.createObjectURL(blob);
+            setAudioUrl(url);
+          }
+        } catch (audioErr) {
+          console.error('Text-to-speech error:', audioErr);
+          setError('Audio generation failed, but translation is available.');
+        } finally {
+          setAudioLoading(false);
+        }
       } else {
-        console.error('Invalid translation response:', response.data);
+        console.error('Invalid translation response:', translationResponse.data);
         throw new Error('Invalid translation response format');
       }
     } catch (err) {
@@ -322,15 +345,18 @@ function App() {
                 <Text fw={500} mb="xs" c="gray.3">Translation:</Text>
                 <Text size="lg" mb="lg">{translation}</Text>
 
-                {translation && (
-                  <Box mb="lg">
-                    {audioUrl && (
-                      <Box mt="md">
-                        <audio controls src={audioUrl} style={{ width: '100%' }} />
-                      </Box>
-                    )}
-                  </Box>
-                )}
+                <Box mb="lg">
+                  {audioLoading ? (
+                    <Box ta="center" mt="md">
+                      <Loader size="sm" />
+                      <Text size="sm" c="dimmed" mt="xs">Generating audio...</Text>
+                    </Box>
+                  ) : audioUrl && (
+                    <Box mt="md">
+                      <audio controls src={audioUrl} style={{ width: '100%' }} />
+                    </Box>
+                  )}
+                </Box>
 
                 <Collapse in={showTips}>
                   <Box>
