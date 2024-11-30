@@ -34,3 +34,6 @@ yarn-error.log*
 server/config/google-credentials.json
 /audio/
 *.mp3
+
+# Local Netlify folder
+.netlify

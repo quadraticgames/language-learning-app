@@ -133,6 +133,10 @@ function App() {
     try {
       console.log('Starting random sentence request...');
       setError(null);
+      setTranslation(''); // Clear translation
+      setShowTips(false); // Hide tips
+      setCurrentTips({ key_sounds: [], common_mistakes: [] }); // Clear tips
+      setAudioUrl(null); // Clear audio
       const response = await axios.get('/.netlify/functions/random-sentence');
       console.log('Random sentence API response:', response);
       
@@ -161,7 +165,8 @@ function App() {
     setError(null);
     setTranslation('');
     setShowTips(false);
-    
+    setCurrentTips({ key_sounds: [], common_mistakes: [] }); // Clear tips
+    setAudioUrl(null); // Clear audio
     try {
       console.log('Sending translation request:', { text, targetLang });
       
