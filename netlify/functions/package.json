@@ -4,7 +4,6 @@
   "description": "Netlify Functions for Language Learning App",
   "type": "module",
   "dependencies": {
-    "@vitalets/google-translate-api": "^9.2.0",
     "node-fetch": "^3.3.2"
   }
 }
