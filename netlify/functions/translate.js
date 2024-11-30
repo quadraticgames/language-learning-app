@@ -1,79 +1,130 @@
 import fetch from 'node-fetch';
 
+// Utility function to safely parse JSON
+const safeParseJSON = (body) => {
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    console.error('JSON parsing error:', error);
+    return null;
+  }
+};
+
 export const handler = async (event, context) => {
-  // Handle OPTIONS request for CORS
+  // Log the entire incoming event for debugging
+  console.log('Incoming event:', JSON.stringify(event, null, 2));
+
+  // CORS preflight handling
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
       },
       body: ''
     };
   }
 
+  // Validate HTTP method
   if (event.httpMethod !== 'POST') {
+    console.error('Invalid HTTP method:', event.httpMethod);
     return {
       statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ error: 'Method Not Allowed' })
     };
   }
 
   try {
-    const { text, targetLanguage } = JSON.parse(event.body);
-    console.log('Received translation request:', { text, targetLanguage });
+    // Parse request body
+    const requestBody = safeParseJSON(event.body);
+    
+    if (!requestBody) {
+      console.error('Failed to parse request body');
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'Invalid request body' })
+      };
+    }
 
+    const { text, targetLanguage } = requestBody;
+    
+    // Validate input parameters
     if (!text || !targetLanguage) {
       console.error('Missing parameters:', { text, targetLanguage });
       return {
         statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ error: 'Missing required parameters' })
       };
     }
 
-    // Using MyMemory Translation API (free, no API key required)
+    // Construct translation API URL
     const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLanguage}`;
-    console.log('Calling translation API:', apiUrl);
+    console.log('Translation API URL:', apiUrl);
 
-    const response = await fetch(apiUrl);
-    console.log('Translation API status:', response.status);
-    
-    const data = await response.json();
-    console.log('Translation API response:', data);
+    // Perform translation API request
+    const apiResponse = await fetch(apiUrl);
+    console.log('Translation API response status:', apiResponse.status);
 
-    if (data.responseStatus === 200 && data.responseData) {
-      const result = {
-        translation: data.responseData.translatedText
-      };
-      console.log('Sending successful response:', result);
-      
+    // Parse API response
+    const apiData = await apiResponse.json();
+    console.log('Translation API response data:', JSON.stringify(apiData, null, 2));
+
+    // Validate API response
+    if (apiData.responseStatus !== 200 || !apiData.responseData) {
+      console.error('Translation API error:', apiData);
       return {
-        statusCode: 200,
+        statusCode: 500,
         headers: {
-          'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Allow-Methods': 'POST, OPTIONS'
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(result)
+        body: JSON.stringify({ 
+          error: 'Translation failed', 
+          details: apiData 
+        })
       };
-    } else {
-      console.error('Translation API error:', data);
-      throw new Error('Translation API returned an invalid response');
     }
+
+    // Return successful translation
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      },
+      body: JSON.stringify({
+        translation: apiData.responseData.translatedText
+      })
+    };
+
   } catch (error) {
-    console.error('Translation function error:', error);
+    // Catch-all error handler
+    console.error('Unexpected error in translation function:', error);
     return {
       statusCode: 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ 
-        error: 'Translation failed',
-        details: error.message
+        error: 'Internal Server Error', 
+        details: error.message 
       })
     };
   }
