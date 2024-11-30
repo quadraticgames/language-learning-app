@@ -129,15 +129,25 @@ function App() {
 
   const handleRandomSentence = async () => {
     try {
+      console.log('Starting random sentence request...');
       setError(null);
-      const response = await axios.get('/api/random-sentence');
+      const response = await axios.get('/.netlify/functions/random-sentence');
+      console.log('Random sentence API response:', response);
+      
       if (response.data && response.data.sentence) {
+        console.log('Setting sentence:', response.data.sentence);
         setText(response.data.sentence);
       } else {
+        console.error('Invalid response format:', response.data);
         throw new Error('Invalid response format');
       }
     } catch (err) {
       console.error('Error fetching random sentence:', err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response,
+        request: err.request
+      });
       setError('Failed to get random sentence. Please try again.');
     }
   };
@@ -153,7 +163,7 @@ function App() {
     try {
       console.log('Sending translation request:', { text, targetLang });
       
-      const response = await axios.post('/api/translate', {
+      const response = await axios.post('/.netlify/functions/translate', {
         text,
         targetLanguage: targetLang
       });
