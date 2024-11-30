@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { Translate } from '@google-cloud/translate/build/src/v2';
 
 // Utility function to safely parse JSON

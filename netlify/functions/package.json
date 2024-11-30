@@ -4,7 +4,6 @@
   "description": "Netlify Functions for Language Learning App",
   "type": "module",
   "dependencies": {
-    "@google-cloud/translate": "^8.5.0",
-    "node-fetch": "^3.3.2"
+    "@google-cloud/translate": "^7.2.2"
   }
 }
