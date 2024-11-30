@@ -12,7 +12,7 @@ const safeParseJSON = (body) => {
 };
 
 export const handler = async (event, context) => {
-  // Log the entire incoming event for debugging
+  console.log('Function started');
   console.log('Incoming event:', JSON.stringify(event, null, 2));
 
   // CORS preflight handling
@@ -42,7 +42,7 @@ export const handler = async (event, context) => {
   }
 
   try {
-    // Parse request body
+    console.log('Parsing request body');
     const requestBody = safeParseJSON(event.body);
     
     if (!requestBody) {
@@ -58,7 +58,8 @@ export const handler = async (event, context) => {
     }
 
     const { text, targetLanguage } = requestBody;
-    
+    console.log('Translation request:', { text, targetLanguage });
+
     // Validate input parameters
     if (!text || !targetLanguage) {
       console.error('Missing parameters:', { text, targetLanguage });
@@ -72,12 +73,35 @@ export const handler = async (event, context) => {
       };
     }
 
-    // Initialize Google Translate with API key
+    // Check if credentials are available
+    console.log('Checking credentials');
+    if (!process.env.GOOGLE_CREDENTIALS) {
+      console.error('GOOGLE_CREDENTIALS environment variable is not set');
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          error: 'Configuration error', 
+          details: 'Missing credentials' 
+        })
+      };
+    }
+
+    // Initialize Google Translate with credentials
+    console.log('Parsing credentials');
+    const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+    console.log('Project ID:', credentials.project_id);
+    
+    console.log('Initializing Translate client');
     const translate = new Translate({
-      key: process.env.GOOGLE_TRANSLATE_API_KEY
+      credentials,
+      projectId: credentials.project_id
     });
 
-    console.log('Translating text...');
+    console.log('Starting translation');
     const [translation] = await translate.translate(text, targetLanguage);
     console.log('Translation successful:', translation);
 
@@ -96,6 +120,20 @@ export const handler = async (event, context) => {
     };
 
   } catch (error) {
+    console.error('Translation error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+
+    // Log environment variables (excluding sensitive data)
+    console.log('Environment check:', {
+      hasGoogleCreds: !!process.env.GOOGLE_CREDENTIALS,
+      nodeEnv: process.env.NODE_ENV,
+      netlifyDev: process.env.NETLIFY_DEV
+    });
+
     // Catch-all error handler
     console.error('Unexpected error in translation function:', error);
     return {
@@ -106,7 +144,9 @@ export const handler = async (event, context) => {
       },
       body: JSON.stringify({ 
         error: 'Internal Server Error', 
-        details: error.message 
+        details: error.message,
+        type: error.name,
+        code: error.code
       })
     };
   }
