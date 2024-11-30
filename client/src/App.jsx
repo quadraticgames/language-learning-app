@@ -114,6 +114,146 @@ const LANGUAGE_TIPS = {
       "Don't pronounce 'ie' like 'eye'",
       "Don't ignore case in nouns"
     ]
+  },
+  it: {
+    key_sounds: [
+      "The 'c' before 'i' or 'e' is pronounced like 'ch' in 'cheese'",
+      "Double consonants are pronounced longer (e.g., 'pizza')",
+      "The 'r' is rolled, similar to Spanish",
+      "The 'gn' combination sounds like 'ñ' in Spanish"
+    ],
+    common_mistakes: [
+      "Don't pronounce the 'h' - it's always silent",
+      "The 'sc' before 'i' or 'e' sounds like 'sh'",
+      "Stress usually falls on the second-to-last syllable",
+      "The 'z' sound is pronounced 'ts' or 'dz'"
+    ]
+  },
+  ja: {
+    key_sounds: [
+      "Vowels are pronounced consistently and purely",
+      "The 'r' sound is between 'r' and 'l' in English",
+      "Each syllable has equal length (mora-timed)",
+      "Pay attention to the pitch accent in words"
+    ],
+    common_mistakes: [
+      "Don't stress syllables like in English",
+      "Keep consonants crisp and short",
+      "Don't add extra vowels to consonant endings",
+      "Maintain consistent pitch within phrases"
+    ]
+  },
+  zh: {
+    key_sounds: [
+      "Master the four tones - they change word meaning",
+      "The 'x' sound is like 'sh' but with tongue down",
+      "The 'q' sound is like 'ch' but lighter",
+      "Practice the 'zh', 'ch', 'sh' distinctions"
+    ],
+    common_mistakes: [
+      "Don't ignore tone changes in combinations",
+      "Keep final consonants very light or silent",
+      "Avoid adding extra syllables",
+      "Don't stress words like in English"
+    ]
+  },
+  ko: {
+    key_sounds: [
+      "Distinguish between aspirated and non-aspirated consonants",
+      "The 'eo' sound is between 'uh' and 'oh'",
+      "The 'eu' sound is similar to 'uh' but with rounded lips",
+      "Practice double consonants (tensed sounds)"
+    ],
+    common_mistakes: [
+      "Don't pronounce silent consonants at syllable ends",
+      "Keep vowels pure and consistent",
+      "Pay attention to word-final intonation",
+      "Maintain proper syllable timing"
+    ]
+  },
+  pt: {
+    key_sounds: [
+      "The 'ão' sound is a nasalized 'ow'",
+      "The 'lh' sounds like 'li' in 'million'",
+      "The 'r' at start of words is rolled",
+      "Practice nasal vowels (ã, õ, etc.)"
+    ],
+    common_mistakes: [
+      "Don't pronounce final 's' as 'z'",
+      "Keep vowels pure and consistent",
+      "Pay attention to open vs closed vowels",
+      "Don't skip the nasal sounds"
+    ]
+  },
+  ru: {
+    key_sounds: [
+      "The 'ы' sound is unique - practice extensively",
+      "Soft consonants are palatalized",
+      "The 'р' (r) is rolled",
+      "Stress changes vowel pronunciation significantly"
+    ],
+    common_mistakes: [
+      "Don't skip vowel reduction in unstressed syllables",
+      "Practice proper consonant softening",
+      "Pay attention to word stress",
+      "Keep hard consonants truly hard"
+    ]
+  },
+  ar: {
+    key_sounds: [
+      "Master throat sounds (ع، ح، خ، غ)",
+      "Distinguish between emphatic consonants",
+      "The 'ع' has no English equivalent",
+      "Long vs short vowels are important"
+    ],
+    common_mistakes: [
+      "Don't skip the glottal stops (hamza)",
+      "Maintain proper vowel length",
+      "Practice sun and moon letter assimilation",
+      "Keep emphatic consonants distinct"
+    ]
+  },
+  hi: {
+    key_sounds: [
+      "Distinguish between aspirated and unaspirated consonants",
+      "The 'ṭ' and 'ḍ' are retroflex sounds",
+      "Practice the difference between 'द' and 'ड'",
+      "Master the schwa deletion rules"
+    ],
+    common_mistakes: [
+      "Don't skip retroflexion in proper sounds",
+      "Keep aspirated consonants properly aspirated",
+      "Maintain proper vowel length",
+      "Pay attention to word stress patterns"
+    ]
+  },
+  vi: {
+    key_sounds: [
+      "Master the six tones - they change word meaning",
+      "The 'đ' sounds like 'd' in English",
+      "Practice final consonant sounds",
+      "Distinguish between similar vowels"
+    ],
+    common_mistakes: [
+      "Don't ignore tone changes",
+      "Keep final consonants very light",
+      "Maintain proper vowel length",
+      "Practice proper glottal stops"
+    ]
+  },
+  nl: {
+    key_sounds: [
+      "The 'g' is a throaty sound",
+      "The 'ui' sound is unique - practice extensively",
+      "The 'ij' sounds like 'ay' in 'say'",
+      "Practice the 'eu' sound"
+    ],
+    common_mistakes: [
+      "Don't pronounce 'g' like in English",
+      "Keep vowels pure and consistent",
+      "Practice proper diphthongs",
+      "Pay attention to word-final devoicing"
+    ]
   }
 };
 
