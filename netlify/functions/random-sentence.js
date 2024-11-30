@@ -22,6 +22,9 @@ export const handler = async (event, context) => {
   try {
     const randomSentence = sentences[Math.floor(Math.random() * sentences.length)];
     
+    console.log('Random sentence selected:', randomSentence);
+    console.log('Response body:', JSON.stringify({ sentence: randomSentence }));
+
     return {
       statusCode: 200,
       headers: {
