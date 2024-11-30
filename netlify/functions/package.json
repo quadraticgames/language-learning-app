@@ -1,0 +1,10 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Language Learning App",
+  "type": "module",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.0",
+    "node-fetch": "^3.3.2"
+  }
+}
