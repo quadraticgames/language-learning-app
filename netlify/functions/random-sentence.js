@@ -1,6 +1,3 @@
-const fs = require('fs');
-const path = require('path');
-
 // Store sentences directly in the function to ensure availability in Netlify environment
 const sentences = `The quick brown fox jumps over the lazy dog.
 Hello, how are you today?
@@ -33,7 +30,7 @@ Have you tried the local specialties?
 When does the bus arrive?
 I'd like to make a reservation for dinner.`.split('\n').filter(line => line.trim() !== '');
 
-export const handler = async (event, context) => {
+export const handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
