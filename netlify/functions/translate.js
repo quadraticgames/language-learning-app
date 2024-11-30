@@ -1,4 +1,4 @@
-import { Translate } from '@google-cloud/translate/build/src/v2';
+const { Translate } = require('@google-cloud/translate').v2;
 
 // Utility function to safely parse JSON
 const safeParseJSON = (body) => {
@@ -10,7 +10,7 @@ const safeParseJSON = (body) => {
   }
 };
 
-export const handler = async (event, context) => {
+exports.handler = async (event, context) => {
   console.log('Function started');
   console.log('Incoming event:', JSON.stringify(event, null, 2));
 
