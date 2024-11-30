@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Container, Select, Button, Paper, Box, Title, TextInput, Text, Loader, Collapse } from '@mantine/core';
+import { Container, Select, Button, Paper, Box, Title, TextInput, Text, Loader, Collapse, Audio } from '@mantine/core';
 import axios from 'axios';
 
 console.log('App.jsx is being imported');
@@ -126,6 +126,8 @@ function App() {
   const [error, setError] = useState(null);
   const [showTips, setShowTips] = useState(false);
   const [currentTips, setCurrentTips] = useState({ key_sounds: [], common_mistakes: [] });
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioLoading, setAudioLoading] = useState(false);
 
   const handleRandomSentence = async () => {
     try {
@@ -200,6 +202,39 @@ function App() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTextToSpeech = async () => {
+    if (!translation) return;
+    
+    setAudioLoading(true);
+    try {
+      const response = await axios.post('/.netlify/functions/text-to-speech', {
+        text: translation,
+        languageCode: targetLang
+      });
+      
+      if (response.data && response.data.audioContent) {
+        // Convert base64 to blob and create URL
+        const blob = new Blob(
+          [Uint8Array.from(atob(response.data.audioContent), c => c.charCodeAt(0))],
+          { type: 'audio/mp3' }
+        );
+        const url = URL.createObjectURL(blob);
+        
+        // Clean up previous audio URL if it exists
+        if (audioUrl) {
+          URL.revokeObjectURL(audioUrl);
+        }
+        
+        setAudioUrl(url);
+      }
+    } catch (err) {
+      console.error('Text-to-speech error:', err);
+      setError('Failed to generate speech. Please try again.');
+    } finally {
+      setAudioLoading(false);
     }
   };
 
@@ -278,6 +313,27 @@ function App() {
               <Paper p="lg" radius="md" bg="dark.5" withBorder>
                 <Text fw={500} mb="xs" c="gray.3">Translation:</Text>
                 <Text size="lg" mb="lg">{translation}</Text>
+
+                {translation && (
+                  <Box mb="lg">
+                    <Button
+                      variant="light"
+                      color="teal"
+                      onClick={handleTextToSpeech}
+                      disabled={audioLoading}
+                      leftSection={audioLoading ? <Loader size="sm" /> : <Text size="1.1rem">🔊</Text>}
+                      mb="md"
+                    >
+                      {audioLoading ? 'Generating audio...' : 'Listen'}
+                    </Button>
+                    
+                    {audioUrl && (
+                      <Box mt="md">
+                        <audio controls src={audioUrl} style={{ width: '100%' }} />
+                      </Box>
+                    )}
+                  </Box>
+                )}
 
                 <Collapse in={showTips}>
                   <Box>
